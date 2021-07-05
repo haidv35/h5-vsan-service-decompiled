@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/META-INF/spring/base/h5-vsan-service-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/session-manager-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsan-base-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsan-base-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsan-context-imports-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsan-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsan-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsandp-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsandp-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsanhealth-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsanhealth-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsaniscsi-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsaniscsi-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsanperf-context-osgi.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsanperf-context.xml</file>
+          <file>file://$MODULE_DIR$/META-INF/spring/base/vsphere-health-base-context.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$" />
+    <content url="jar://$MODULE_DIR$/../h5-vsan-service.jar!/" />
+    <orderEntry type="jdk" jdkName="11" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Spring-5.2.3.RELEASE" level="project" />
+  </component>
+</module>

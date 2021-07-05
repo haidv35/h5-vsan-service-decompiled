@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Configures the session manager beans. -->
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.vmware.vsphere.client.vsandp.core.sessionmanager.common,
+               com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.resource,
+               com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.util,
+               com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client,
+               com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.executor,
+               com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.util"/>
+
+   <bean name="vmodlContext"
+         class="com.vmware.vsphere.client.vsandp.helper.VmodlContextInitializer"
+         factory-method="createContext">
+      <constructor-arg>
+         <list>
+            <value>com.vmware.vim.binding.vim</value>
+            <value>com.vmware.vim.binding.lookup</value>
+            <value>com.vmware.vim.binding.sso</value>
+            <value>com.vmware.vim.binding.pbm</value>
+            <value>com.vmware.vim.vsan.binding.vim</value>
+            <value>com.vmware.vim.vsandp.binding.vim.vsandp</value>
+         </list>
+      </constructor-arg>
+   </bean>
+
+   <!-- Template instance of VLSI settings. It is meant to hold the shared objects
+      for all VLSI connections: VMODL context, executor factory and executor settings.
+      All other properties have dummy values and must be set runtime. Only service host
+      and version are required, others are optional. -->
+   <bean name="vlsiSettingsTemplate" class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.VlsiSettings">
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.http.HttpFactory"/>
+      </constructor-arg>
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.http.HttpSettings" factory-method="createTemplate">
+            <constructor-arg ref="execFactory"/>
+            <constructor-arg ref="execSettings"/>
+            <constructor-arg ref="vmodlContext"/>
+            <constructor-arg value="8"/> <!-- max connections -->
+            <constructor-arg value="30000"/> <!-- timeout in milliseconds -->
+         </bean>
+      </constructor-arg>
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.Authenticator"/> <!-- NoOp authenticator -->
+      </constructor-arg>
+      <constructor-arg>
+         <null/> <!-- session cookie -->
+      </constructor-arg>
+   </bean>
+
+    <bean name="sessionScheduler"
+          class="java.util.concurrent.ScheduledThreadPoolExecutor"
+          destroy-method="shutdown">
+        <constructor-arg value="8"/> <!-- core pool size -->
+    </bean>
+
+    <bean name="healthCheckDelay"
+          class="java.lang.Long">
+        <constructor-arg value="20000"/>
+    </bean>
+
+    <bean name="healthCheckTimeout"
+          class="java.lang.Long">
+        <constructor-arg value="30000"/>
+    </bean>
+
+    <bean name="connectionRetention"
+          class="java.lang.Long">
+        <constructor-arg value="300000"/>
+    </bean>
+
+    <!-- Shared executor factory for all VLSI factories -->
+    <bean name="execFactory"
+          class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.executor.CachedExecutorFactory"
+          destroy-method="shutdown"/>
+
+   <bean name="execSettings"
+         class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.executor.ExecutorSettings">
+      <constructor-arg value="8"/> <!-- initial threads -->
+      <constructor-arg value="100"/> <!-- max threads -->
+   </bean>
+
+   <bean name="ssoFactory"
+          class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.sso.SsoAdminFactory"/>
+
+   <bean name="lsFactory"
+         class="com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.resource.health.HealthCheckingFactory"
+         destroy-method="shutdown">
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.sso.LookupSvcFactory"/>
+      </constructor-arg>
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.health.sso.LookupSvcHealthMonitor"/>
+      </constructor-arg>
+      <constructor-arg ref="sessionScheduler"/>
+      <constructor-arg ref="healthCheckDelay"/>
+      <constructor-arg ref="healthCheckTimeout"/>
+      <constructor-arg ref="connectionRetention"/>
+   </bean>
+
+    <bean name="vcFactory"
+          class="com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.resource.health.HealthCheckingFactory"
+          destroy-method="shutdown">
+        <constructor-arg>
+            <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.vc.VcFactory"/>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.health.vc.VcHealthMonitor"/>
+        </constructor-arg>
+        <constructor-arg ref="sessionScheduler"/>
+        <constructor-arg ref="healthCheckDelay"/>
+        <constructor-arg ref="healthCheckTimeout"/>
+        <constructor-arg ref="connectionRetention"/>
+    </bean>
+
+    <bean name="pbmFactory"
+          class="com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.resource.health.HealthCheckingFactory"
+          destroy-method="shutdown">
+        <constructor-arg>
+            <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.pbm.PbmFactory"/>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.health.pbm.PbmHealthMonitor"/>
+        </constructor-arg>
+        <constructor-arg ref="sessionScheduler"/>
+        <constructor-arg ref="healthCheckDelay"/>
+        <constructor-arg ref="healthCheckTimeout"/>
+        <constructor-arg ref="connectionRetention"/>
+    </bean>
+
+   <bean name="dpFactory"
+         class="com.vmware.vsphere.client.vsandp.core.sessionmanager.resource.resource.health.HealthCheckingFactory"
+         destroy-method="shutdown">
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.dp.DpExploratoryFactory">
+            <constructor-arg>
+               <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.dp.DpFactory"/>
+            </constructor-arg>
+         </bean>
+      </constructor-arg>
+      <constructor-arg>
+         <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.vlsi.client.dp.DpHealthMonitor"/>
+      </constructor-arg>
+      <constructor-arg ref="sessionScheduler"/>
+      <constructor-arg ref="healthCheckDelay"/>
+      <constructor-arg ref="healthCheckTimeout"/>
+      <constructor-arg ref="connectionRetention"/>
+   </bean>
+
+    <bean name="lsLocator"
+          class="com.vmware.vsphere.client.vsandp.core.sessionmanager.common.DelegatingLookupSvcLocator">
+        <constructor-arg>
+            <list>
+                <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.common.LookupSvcLocatorImpl"/>
+                <bean class="com.vmware.vsphere.client.vsandp.core.sessionmanager.common.FallbackLookupSvcLocator"/>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>

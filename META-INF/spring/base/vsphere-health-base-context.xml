@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <bean name="vsphereHealthThreadPoolImpl" factory-bean="execFactory" factory-method="acquire" destroy-method="close">
+      <constructor-arg ref="execSettings"></constructor-arg>
+   </bean>
+
+   <bean name="vsphereHealthServiceFactory"
+         class="com.vmware.vsphere.client.vsan.base.service.VsphereHealthServiceFactoryImpl"
+         depends-on="vsanServiceBundleActivator"
+         destroy-method="beanDestroyed">
+
+      <property name="threadPoolExecutor" ref="vsphereHealthThreadPoolImpl" />
+      <property name="userSessionService" ref="userSessionService" />
+      <property name="bundleActivator" ref="vsanServiceBundleActivator" />
+   </bean>
+
+   <bean name="vsphereHealthProviderUtils_setVsphereHealthServiceFactory"
+         class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="staticMethod"
+                value="com.vmware.vsphere.client.vsan.base.util.VsphereHealthProviderUtils.setVsphereHealthServiceFactory" />
+      <property name="arguments">
+         <list>
+            <ref bean="vsphereHealthServiceFactory" />
+         </list>
+      </property>
+   </bean>
+</beans>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <!-- regular spring configuration file defining the beans for this bundle.
+      The configuration of OSGI definitions is kept in a separate configuration
+      file so that this file can easily be used for integration testing outside
+      of an OSGi environment. -->
+
+   <bean name="vsanIscsiPropertyProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiPropertyProvider">
+      <property name="vcClient" ref="vcClient" />
+   </bean>
+
+   <bean name="vsanIscsiMutationProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiMutationProvider"/>
+
+   <bean name="vsanIscsiTargetPropertyProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiTargetPropertyProvider" >
+   </bean>
+
+   <bean name="vsanIscsiTargetMutationProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiTargetMutationProvider"/>
+
+   <bean name="vsanIscsiInitiatorGroupPropertyProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiInitiatorGroupPropertyProvider"/>
+
+   <bean name="vsanIscsiInitiatorGroupMutationProviderImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.providers.VsanIscsiInitiatorGroupMutationProvider"/>
+
+   <bean name="vsanIscsiTargetDataAdapterImpl"
+      class="com.vmware.vsphere.client.vsan.iscsi.adapter.VsanIscsiTargetDataAdapter"/>
+
+</beans>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <bean name="vsanMutationProviderImpl"
+         class="com.vmware.vsphere.client.vsan.impl.VsanMutationProvider">
+   </bean>
+
+   <bean name="vsanPropertyProviderImpl"
+         class="com.vmware.vsphere.client.vsan.impl.VsanPropertyProvider"/>
+
+   <bean name="vsanHostPropertyProviderAdapter"
+         class="com.vmware.vsphere.client.vsan.dataprovider.VsanHostPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+      <constructor-arg index="1" ref="vcClient"/>
+   </bean>
+
+   <bean name="vsanClusterPropertyProviderAdapterImpl"
+         class="com.vmware.vsphere.client.vsan.dataprovider.VsanClusterPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="vsanFolderPropertyProviderAdapterImpl"
+         class="com.vmware.vsphere.client.vsan.dataprovider.VsanFolderPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="vsanStretchedClusterPropertyProviderImpl"
+         class="com.vmware.vsphere.client.vsan.stretched.VsanStretchedClusterPropertyProvider"/>
+
+   <bean name="vsanStretchedClusterMutationProviderImpl"
+         class="com.vmware.vsphere.client.vsan.stretched.VsanStretchedClusterMutationProvider">
+   </bean>
+
+   <bean name="configureVsanClusterMutationProviderImpl"
+         class="com.vmware.vsphere.client.vsan.impl.ConfigureVsanClusterMutationProvider">
+   </bean>
+
+   <bean name="vumPropertyProviderAdapter"
+         class="com.vmware.vsphere.client.vsan.dataprovider.vum.VumPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="witnessHostsProvider"
+         class="com.vmware.vsphere.client.vsan.stretched.VsanWitnessHostProvider">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="vsanUpgradeProviderImpl"
+         class="com.vmware.vsphere.client.vsan.upgrade.VsanUpgradePropertyProvider">
+      <constructor-arg ref="legacyVsanObjectVersionProviderImpl" index="0"/>
+   </bean>
+
+   <bean name="legacyVsanObjectVersionProviderImpl"
+         class="com.vmware.vsphere.client.vsan.upgrade.LegacyVsanObjectVersionProvider">
+      <constructor-arg ref="vcClient" index="0"/>
+   </bean>
+
+   <bean name="vsanUpgradePropertyProviderAdapter"
+         class="com.vmware.vsphere.client.vsan.upgrade.VsanUpgradePropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="vsanUpgradeMutationProviderImpl"
+         class="com.vmware.vsphere.client.vsan.upgrade.VsanUpgradeMutationProvider"/>
+
+   <bean name="whatIfPropertyProviderAdapter"
+         class="com.vmware.vsphere.client.vsan.whatif.WhatIfPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="whatIfPropertyProviderImpl"
+         class="com.vmware.vsphere.client.vsan.whatif.WhatIfPropertyProvider">
+   </bean>
+
+   <bean name="vsanConfigPropertyProviderAdapterImpl"
+         class="com.vmware.vsphere.client.vsan.config.VsanConfigPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+
+   <bean name="guardRailPropertyProviderAdapter"
+         class="com.vmware.vsphere.client.vsan.guardrail.GuardRailPropertyProviderAdapter">
+      <constructor-arg index="0" ref="dataServiceExtensionRegistry"/>
+   </bean>
+</beans>

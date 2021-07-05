@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Descriptors>
+   <PropertyDescriptor>
+      <provider>VirtualMachine</provider>
+      <name>cluster</name>
+      <type>ClusterComputeResource</type>
+      <computed>true</computed>
+      <expr context="bounded">local:getAncestorsOfType(//HostSystem[@qs:id=$target/runtime/host/@xlink:href], xs:QName("ClusterComputeResource"))</expr>
+   </PropertyDescriptor>
+</Descriptors>

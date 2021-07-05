@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <!-- regular spring configuration file defining the beans for this
+      bundle. The configuration of OSGI definitions is kept in a separate
+      configuration file so that this file can easily be used
+      for integration testing outside of an OSGi environment. -->
+
+   <bean name="vsanPerfProviderImpl"
+      class="com.vmware.vsphere.client.vsan.perf.VsanPerfPropertyProvider">
+   </bean>
+
+   <bean name="vsanPerfMutationProviderImpl"
+      class="com.vmware.vsphere.client.vsan.perf.VsanPerfMutationProvider" />
+
+   <bean name="vsanPerfDiagnosticProviderImpl"
+      class="com.vmware.vsphere.client.vsan.perf.PerformanceDiagnosticsPropertyProvider"/>
+</beans>

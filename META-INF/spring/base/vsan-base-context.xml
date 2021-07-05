@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <import resource="classpath:/META-INF/spring/base/session-manager-context.xml" />
+
+  <bean name="localizedMessageBundle" class="com.vmware.vsphere.client.vsan.util.MessageBundle"/>
+
+  <bean name="vsanWorkerThreadFactory" class="com.vmware.vise.util.concurrent.WorkerThreadFactory">
+    <constructor-arg index="0">
+      <value>vsan-provider-thread-pool</value>
+    </constructor-arg>
+  </bean>
+
+  <bean name="vsanThreadPoolImpl" factory-bean="execFactory" factory-method="acquire" destroy-method="close">
+    <constructor-arg ref="execSettings"></constructor-arg>
+  </bean>
+
+  <!-- Since this bean is responsible to load vsan vmodl types, if your bean
+    depends on these types being pre-loaded, add a depends-on in the dependent
+    bean. -->
+  <bean name="vsanServiceBundleActivator"
+    class="com.vmware.vsphere.client.vsan.base.service.VsanServiceBundleActivator" />
+
+  <bean name="vsanServiceFactory"
+        class="com.vmware.vsphere.client.vsan.base.service.VsanServiceFactoryImpl"
+        depends-on="vsanServiceBundleActivator"
+        destroy-method="beanDestroyed">
+    <property name="threadPoolExecutor" ref="vsanThreadPoolImpl" />
+    <property name="userSessionService" ref="userSessionService" />
+    <property name="bundleActivator" ref="vsanServiceBundleActivator" />
+  </bean>
+
+  <bean name="vsanProviderUtils_setVmodlHelper"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.base.util.VsanProviderUtils.setVmodlHelper" />
+    <property name="arguments">
+      <list>
+        <ref bean="vmodlHelper" />
+      </list>
+    </property>
+  </bean>
+
+  <bean name="vsanProviderUtils_setVsanServiceFactory"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.base.util.VsanProviderUtils.setVsanServiceFactory" />
+    <property name="arguments">
+      <list>
+        <ref bean="vsanServiceFactory" />
+      </list>
+    </property>
+  </bean>
+
+
+
+  <bean name="vsanQueryUtil_setDataService"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.util.QueryUtil.setDataService" />
+    <property name="arguments">
+      <list>
+        <ref bean="dataService" />
+      </list>
+    </property>
+  </bean>
+
+  <bean name="vsanComponentsProviderImpl"
+        class="com.vmware.vsphere.client.vsan.base.impl.VsanComponentsProvider">
+    <constructor-arg index="0" ref="vcClient" />
+  </bean>
+
+  <bean name="capabilityPropertyProviderImpl"
+        class="com.vmware.vsphere.client.vsan.base.impl.VsanCapabilityProvider"/>
+
+  <bean name="pbmDataProviderImpl"
+        class="com.vmware.vsphere.client.vsan.base.impl.PbmDataProvider"/>
+
+  <bean name="vsanCapabilityCacheManager"
+        class="com.vmware.vsphere.client.vsan.base.util.VsanCapabilityCacheManager"
+        destroy-method="shutdown">
+    <constructor-arg name="sessionService" ref="userSessionService" />
+    <constructor-arg name="expirationTimeMin" value="300000" />
+    <constructor-arg name="expirationTimeMax" value="600000" />
+    <constructor-arg name="cleanThreshold" value="2000" />
+  </bean>
+
+  <bean name="vsanCapabilityUtils_setVsanCapabilityCacheManager"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.base.util.VsanCapabilityUtils.setVsanCapabilityCacheManager" />
+    <property name="arguments">
+      <list>
+        <ref bean="vsanCapabilityCacheManager" />
+      </list>
+    </property>
+  </bean>
+
+  <bean name="vsanUtils_setMessageBundle"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.util.Utils.setMessageBundle" />
+    <property name="arguments">
+      <list>
+        <ref bean="localizedMessageBundle" />
+      </list>
+    </property>
+  </bean>
+
+
+  <bean name="vsanFormatUtils_setUserSessionService"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+              value="com.vmware.vsphere.client.vsan.util.FormatUtil.setUserSessionService" />
+    <property name="arguments">
+      <list>
+        <ref bean="userSessionService" />
+      </list>
+    </property>
+  </bean>
+
+</beans>
